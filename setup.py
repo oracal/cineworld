@@ -1,4 +1,4 @@
-#!/usr/bib/env python
+#!/usr/bin/env python
 
 '''
 Created on 17 Jul 2011
@@ -19,5 +19,5 @@ setup(
     url='https://github.com/oracal/cineworld',
     license='LICENSE.txt',
     description='Cineworld API Wrapper',
-    long_description=open('README.txt').read(),
+    long_description=open('README.md').read(),
 )

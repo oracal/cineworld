@@ -1,4 +1,4 @@
-#!/usr/bib/env python
+#!/usr/bin/env python
 
 '''
 Created on 17 Jul 2011
@@ -8,8 +8,9 @@ Created on 17 Jul 2011
 
 from cineworld_api_key import API_KEY
 from fuzzywuzzy.fuzz import WRatio
-from urllib import urlencode
 from operator import itemgetter
+from urllib import urlencode
+import datetime
 
 try:
     import json
@@ -45,6 +46,18 @@ class CW(object):
         self.film_list = self.get_films()
         return self.film_list
     
+    #uses a certain cinema (O2) and a certain day when non specialist films show (Wednesday) to get a list of the latest box office films
+    def get_box_office_films(self):
+        today = datetime.date.today()
+        next_wednesday = (today + datetime.timedelta((2 - today.weekday()) % 7)).strftime('%Y%m%d')
+        films = self.get_films(cinema=79, date = next_wednesday)
+        
+        films = filter(lambda x: '3D' not in x['title'], films)
+        for film in films:
+            if '2D -' in film['title']:
+                film['title']=film['title'][5:]
+        return films
+    
     def get_dates(self, **kwargs):
         return self.get_list('dates', self.dates_url, **kwargs)
     
@@ -61,14 +74,14 @@ class CW(object):
     def film_search(self, title):
         films = []
         if not hasattr(self, 'film_list'):
-            self.film_list = self.get_film_list()
+            self.get_film_list()
             
         for film in self.film_list:
             strength = WRatio(title, film['title'])
             if  strength > 80:
                 film.update({u'strength':strength})
                 films.append(film)
-        films_sorted = sorted(films, key=itemgetter('strength'))
+        films_sorted = sorted(films, key=itemgetter('strength'), reverse = True)
         return films_sorted
         
     def get_film_id(self, title, three_dimensional=False):
