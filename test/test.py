@@ -35,8 +35,6 @@ class CWClassInitTest(unittest.TestCase):
         self.assertEqual(CW('called_api_key').api_key, 'called_api_key')
 
 class GetListTest(unittest.TestCase):
-    
-
 
     def setUp(self):
         set_up()
